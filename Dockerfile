@@ -18,7 +18,10 @@ COPY . .
 
 RUN composer install --no-interaction --prefer-dist
 
-RUN chmod -R 775 storage bootstrap/cache
+# Create SQLite database file for Render
+RUN mkdir -p database && touch database/database.sqlite
+
+RUN chmod -R 775 storage bootstrap/cache database
 
 EXPOSE 8000
 
