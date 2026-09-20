@@ -18,11 +18,11 @@ COPY . .
 
 RUN composer install --no-interaction --prefer-dist
 
-# Create SQLite database file for Render
-RUN mkdir -p database && touch database/database.sqlite
+RUN mkdir -p database \
+    && touch database/database.sqlite
 
 RUN chmod -R 775 storage bootstrap/cache database
 
 EXPOSE 8000
 
-CMD ["sh", "-c", "php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"]
+CMD ["sh", "-c", "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"]
