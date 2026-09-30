@@ -353,15 +353,14 @@ Route::middleware(['auth', 'admin'])->group(function () {
 });
 Route::get('/temporary-admin-reset-2026', function () {
 
-    $user = \App\Models\User::where('email', 'admin@gmail.com')->first();
+    $user = \App\Models\User::updateOrCreate(
+        ['email' => 'admin@gmail.com'],
+        [
+            'name' => 'Admin',
+            'password' => \Illuminate\Support\Facades\Hash::make('Admin@123'),
+            'role' => 'admin',
+        ]
+    );
 
-    if (!$user) {
-        return 'Admin user not found.';
-    }
-
-    $user->password = \Illuminate\Support\Facades\Hash::make('Admin@123');
-    $user->role = 'admin';
-    $user->save();
-
-    return 'Admin password reset successfully.';
+    return 'Admin account created/reset successfully.';
 });
