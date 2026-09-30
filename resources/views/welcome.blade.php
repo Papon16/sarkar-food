@@ -1134,8 +1134,8 @@
         <div class="logo-text">
 
             <div class="logo-name">
-                Sarkar<span>Food</span>
-            </div>
+    {{ $settings->restaurant_name ?? 'SarkarFood' }}
+</div>
 
             <div class="logo-tagline">
                 Good Food &nbsp; Better Mood
@@ -1803,12 +1803,9 @@
 
         <div>
 
-            <div class="footer-logo">
-
-                Sarkar<span>Food</span>
-
-            </div>
-
+ <div class="logo-name">
+    {{ $settings->restaurant_name ?? 'SarkarFood' }}
+</div>
             <p class="footer-description">
 
                 Delicious food made with fresh ingredients
