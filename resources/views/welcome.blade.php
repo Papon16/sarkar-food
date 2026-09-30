@@ -1207,7 +1207,7 @@
         <div class="logo-text">
 
             <div class="logo-name">
-                {{ $settings->restaurant_name ?? 'SarkarFood' }}
+                {{ $settings->restaurant_name ?? 'SarkarFood' }}<span>Food</span>
             </div>
 
             <div class="logo-tagline">
@@ -1888,7 +1888,7 @@
 
             <div class="footer-logo">
 
-                {{ $settings->restaurant_name ?? 'SarkarFood' }}
+                {{ $settings->restaurant_name ?? 'SarkarFood' }}<span>Food</span>
 
             </div>
 
