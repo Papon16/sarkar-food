@@ -1,199 +1,809 @@
-<?php
+<!DOCTYPE html>
+<html lang="en">
 
-namespace App\Http\Controllers;
+<head>
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use App\Models\User;
+    <meta charset="UTF-8">
 
-class AuthController extends Controller
-{
-    // =========================================
-    // REGISTER PAGE
-    // =========================================
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-    public function showRegister()
-    {
-        return view('register');
-    }
+    <title>Login | Foodie</title>
 
+    <style>
 
-    // =========================================
-    // REGISTER USER
-    // =========================================
-
-   public function register(Request $request)
-{
-    $validated = $request->validate([
-        'name' => 'required|string|max:100',
-
-        'email' => [
-            'required',
-            'string',
-            'email',
-            'max:150',
-            'unique:users,email',
-        ],
-
-        'password' => [
-            'required',
-            'string',
-            'min:6',
-            'confirmed',
-        ],
-    ]);
-
-    User::create([
-        'name' => $validated['name'],
-        'email' => $validated['email'],
-        'password' => Hash::make($validated['password']),
-        'role' => 'user',
-    ]);
-
-    return redirect()
-        ->route('login')
-        ->with(
-            'success',
-            'Registration successful! Please login.'
-        );
-}
-
-
-    // =========================================
-    // LOGIN PAGE
-    // =========================================
-
-    public function showLogin()
-    {
-        return view('login');
-    }
-
-
-    // =========================================
-    // LOGIN USER - ROLE BASED
-    // =========================================
-
-    public function login(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|email',
-
-            'password' => 'required',
-
-            'role' => 'required|in:customer,admin',
-        ]);
-
-
-        $credentials = [
-            'email' => $request->email,
-
-            'password' => $request->password,
-        ];
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | Check email + password
-        |--------------------------------------------------------------------------
-        */
-
-        if (!Auth::attempt($credentials)) {
-
-            return back()
-                ->withErrors([
-                    'email' => 'Email or password is incorrect.',
-                ])
-                ->withInput($request->only('email', 'role'));
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | Regenerate session
-        |--------------------------------------------------------------------------
-        */
+        body {
 
-        $request->session()->regenerate();
+            min-height: 100vh;
 
+            display: flex;
 
-        /*
-        |--------------------------------------------------------------------------
-        | Check selected role with database role
-        |--------------------------------------------------------------------------
-        */
+            align-items: center;
 
-        $user = Auth::user();
+            justify-content: center;
 
+            font-family: Arial, sans-serif;
 
-        if ($user->role !== $request->role) {
-
-            Auth::logout();
-
-            $request->session()->invalidate();
-
-            $request->session()->regenerateToken();
-
-
-            return back()
-                ->withErrors([
-                    'role' => 'The selected role does not match this account.',
-                ])
-                ->withInput($request->only('email', 'role'));
-        }
-
-
-        /*
-        |--------------------------------------------------------------------------
-        | ADMIN
-        |--------------------------------------------------------------------------
-        */
-
-        if ($user->role === 'admin') {
-
-            return redirect()
-                ->route('admin.dashboard')
-                ->with(
-                    'success',
-                    'Welcome to Admin Dashboard! 👨‍💼'
+            background:
+                linear-gradient(
+                    135deg,
+                    #fff7f1,
+                    #ffe8dc
                 );
+
+            padding: 20px;
         }
 
 
-        /*
-        |--------------------------------------------------------------------------
-        | CUSTOMER
-        |--------------------------------------------------------------------------
-        */
+        /* =================================
+           LOGIN WRAPPER
+        ================================= */
 
-        return redirect()
-            ->route('home')
-            ->with(
-                'success',
-                'Welcome back to Foodie! 🎉'
-            );
-    }
+        .login-wrapper {
 
+            width: 100%;
 
-    // =========================================
-    // LOGOUT
-    // =========================================
+            max-width: 900px;
 
-    public function logout(Request $request)
-    {
-        Auth::logout();
+            min-height: 540px;
 
+            display: flex;
 
-        $request->session()->invalidate();
+            background: white;
 
-        $request->session()->regenerateToken();
+            border-radius: 25px;
+
+            overflow: hidden;
+
+            box-shadow:
+                0 20px 60px rgba(0,0,0,0.12);
+        }
 
 
-        return redirect()
-            ->route('home')
-            ->with(
-                'success',
-                'You have been logged out successfully.'
-            );
-    }
-}
+        /* =================================
+           LEFT SIDE
+        ================================= */
+
+        .left-side {
+
+            width: 50%;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #ff5722,
+                    #ff7043
+                );
+
+            color: white;
+
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            text-align: center;
+
+            padding: 50px;
+
+            position: relative;
+
+            overflow: hidden;
+        }
+
+
+        .left-side::before {
+
+            content: "";
+
+            position: absolute;
+
+            width: 220px;
+
+            height: 220px;
+
+            background: rgba(255,255,255,0.10);
+
+            border-radius: 50%;
+
+            top: -80px;
+
+            left: -80px;
+        }
+
+
+        .left-side::after {
+
+            content: "";
+
+            position: absolute;
+
+            width: 260px;
+
+            height: 260px;
+
+            background: rgba(255,255,255,0.10);
+
+            border-radius: 50%;
+
+            bottom: -130px;
+
+            right: -100px;
+        }
+
+
+        .brand-content {
+
+            position: relative;
+
+            z-index: 2;
+        }
+
+
+        .big-food {
+
+            font-size: 75px;
+
+            margin-bottom: 15px;
+        }
+
+
+        .brand-content h1 {
+
+            font-size: 42px;
+
+            margin-bottom: 15px;
+        }
+
+
+        .brand-content p {
+
+            font-size: 16px;
+
+            line-height: 1.7;
+
+            opacity: 0.95;
+
+            max-width: 330px;
+        }
+
+
+        .features {
+
+            margin-top: 30px;
+
+            display: flex;
+
+            justify-content: center;
+
+            gap: 10px;
+
+            flex-wrap: wrap;
+        }
+
+
+        .feature {
+
+            background: rgba(255,255,255,0.15);
+
+            padding: 9px 15px;
+
+            border-radius: 30px;
+
+            font-size: 13px;
+        }
+
+
+        /* =================================
+           RIGHT SIDE
+        ================================= */
+
+        .right-side {
+
+            width: 50%;
+
+            padding: 55px 48px;
+
+            display: flex;
+
+            flex-direction: column;
+
+            justify-content: center;
+        }
+
+
+        .logo {
+
+            color: #ff5722;
+
+            font-size: 28px;
+
+            font-weight: bold;
+
+            margin-bottom: 8px;
+        }
+
+
+        .title {
+
+            font-size: 30px;
+
+            color: #171717;
+
+            margin-bottom: 8px;
+        }
+
+
+        .subtitle {
+
+            color: #777;
+
+            font-size: 14px;
+
+            margin-bottom: 28px;
+        }
+
+
+        /* =================================
+           SUCCESS MESSAGE
+        ================================= */
+
+        .success-box {
+
+            background: #effff3;
+
+            color: #198754;
+
+            border: 1px solid #bde5c8;
+
+            padding: 12px;
+
+            border-radius: 9px;
+
+            font-size: 13px;
+
+            margin-bottom: 18px;
+        }
+
+
+        /* =================================
+           ERROR
+        ================================= */
+
+        .error-box {
+
+            background: #fff1f1;
+
+            color: #d93025;
+
+            border: 1px solid #ffd0d0;
+
+            padding: 12px;
+
+            border-radius: 9px;
+
+            font-size: 13px;
+
+            margin-bottom: 18px;
+        }
+
+
+        .error {
+
+            color: #d93025;
+
+            font-size: 12px;
+
+            margin-top: -12px;
+
+            margin-bottom: 12px;
+        }
+
+
+        /* =================================
+           FORM
+        ================================= */
+
+        .form-group {
+
+            margin-bottom: 18px;
+        }
+
+
+        .form-group label {
+
+            display: block;
+
+            font-size: 14px;
+
+            font-weight: bold;
+
+            margin-bottom: 8px;
+
+            color: #222;
+        }
+
+
+        .input-box {
+
+            position: relative;
+        }
+
+
+        .input-icon {
+
+            position: absolute;
+
+            left: 14px;
+
+            top: 50%;
+
+            transform: translateY(-50%);
+
+            font-size: 16px;
+
+            z-index: 2;
+        }
+
+
+        .form-group input,
+        .form-group select {
+
+            width: 100%;
+
+            height: 48px;
+
+            padding: 0 15px 0 42px;
+
+            border: 1px solid #ddd;
+
+            border-radius: 10px;
+
+            outline: none;
+
+            font-size: 14px;
+
+            background: white;
+
+            transition: 0.3s;
+        }
+
+
+        .form-group select {
+
+            padding-left: 42px;
+
+            cursor: pointer;
+        }
+
+
+        .form-group input:focus,
+        .form-group select:focus {
+
+            border-color: #ff5722;
+
+            box-shadow:
+                0 0 0 3px rgba(255,87,34,0.10);
+        }
+
+
+        /* =================================
+           LOGIN BUTTON
+        ================================= */
+
+        .login-button {
+
+            width: 100%;
+
+            height: 50px;
+
+            border: none;
+
+            border-radius: 10px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #ff5722,
+                    #ff7043
+                );
+
+            color: white;
+
+            font-size: 15px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition: 0.3s;
+
+            box-shadow:
+                0 8px 20px rgba(255,87,34,0.25);
+        }
+
+
+        .login-button:hover {
+
+            transform: translateY(-2px);
+
+            box-shadow:
+                0 12px 25px rgba(255,87,34,0.30);
+        }
+
+
+        /* =================================
+           REGISTER
+        ================================= */
+
+        .register {
+
+            text-align: center;
+
+            margin-top: 23px;
+
+            color: #777;
+
+            font-size: 14px;
+        }
+
+
+        .register a {
+
+            color: #ff5722;
+
+            font-weight: bold;
+
+            text-decoration: none;
+
+            margin-left: 4px;
+        }
+
+
+        .register a:hover {
+
+            text-decoration: underline;
+        }
+
+
+        /* =================================
+           HOME LINK
+        ================================= */
+
+        .home-link {
+
+            display: block;
+
+            text-align: center;
+
+            margin-top: 15px;
+
+            color: #777;
+
+            text-decoration: none;
+
+            font-size: 13px;
+        }
+
+
+        .home-link:hover {
+
+            color: #ff5722;
+        }
+
+
+        /* =================================
+           MOBILE
+        ================================= */
+
+        @media(max-width: 750px) {
+
+            .login-wrapper {
+
+                max-width: 450px;
+
+                min-height: auto;
+            }
+
+
+            .left-side {
+
+                display: none;
+            }
+
+
+            .right-side {
+
+                width: 100%;
+
+                padding: 40px 30px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<div class="login-wrapper">
+
+
+    <!-- =================================
+         LEFT SIDE
+    ================================= -->
+
+    <div class="left-side">
+
+        <div class="brand-content">
+
+            <div class="big-food">
+                🍔
+            </div>
+
+            <h1>
+                Foodie
+            </h1>
+
+            <p>
+                Delicious food delivered
+                straight to your doorstep.
+                Login and enjoy your favorite
+                meals today!
+            </p>
+
+
+            <div class="features">
+
+                <span class="feature">
+                    🍕 Fresh Food
+                </span>
+
+                <span class="feature">
+                    ⚡ Fast Delivery
+                </span>
+
+                <span class="feature">
+                    💗 Best Quality
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================
+         RIGHT SIDE
+    ================================= -->
+
+    <div class="right-side">
+
+
+        <div class="logo">
+            🍔 Foodie
+        </div>
+
+
+        <h2 class="title">
+            Welcome Back!
+        </h2>
+
+
+        <p class="subtitle">
+            Login to continue to your account
+        </p>
+
+
+        <!-- =================================
+             SUCCESS MESSAGE
+        ================================= -->
+
+        @if (session('success'))
+
+            <div class="success-box">
+
+                {{ session('success') }}
+
+            </div>
+
+        @endif
+
+
+        <!-- =================================
+             ERROR MESSAGE
+        ================================= -->
+
+        @if ($errors->any())
+
+            <div class="error-box">
+
+                @foreach ($errors->all() as $error)
+
+                    <div>
+                        {{ $error }}
+                    </div>
+
+                @endforeach
+
+            </div>
+
+        @endif
+
+
+        <!-- =================================
+             LOGIN FORM
+        ================================= -->
+
+        <form
+            action="{{ route('login.submit') }}"
+            method="POST"
+        >
+
+            @csrf
+
+
+            <!-- EMAIL -->
+
+            <div class="form-group">
+
+                <label>
+                    Email Address
+                </label>
+
+                <div class="input-box">
+
+                    <span class="input-icon">
+                        ✉️
+                    </span>
+
+                    <input
+                        type="email"
+                        name="email"
+                        value="{{ old('email') }}"
+                        placeholder="Enter your email"
+                        required
+                        autofocus
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- PASSWORD -->
+
+            <div class="form-group">
+
+                <label>
+                    Password
+                </label>
+
+                <div class="input-box">
+
+                    <span class="input-icon">
+                        🔒
+                    </span>
+
+                    <input
+                        type="password"
+                        name="password"
+                        placeholder="Enter your password"
+                        required
+                    >
+
+                </div>
+
+            </div>
+
+
+            <!-- ROLE -->
+
+            <div class="form-group">
+
+                <label>
+                    Login As
+                </label>
+
+                <div class="input-box">
+
+                    <span class="input-icon">
+                        👤
+                    </span>
+
+                    <select
+                        name="role"
+                        required
+                    >
+
+                        <option value="">
+                            Select your role
+                        </option>
+
+
+                        <!-- CUSTOMER = USER -->
+
+                        <option
+                            value="user"
+                            {{ old('role') == 'user' ? 'selected' : '' }}
+                        >
+                            Customer
+                        </option>
+
+
+                        <!-- ADMIN -->
+
+                        <option
+                            value="admin"
+                            {{ old('role') == 'admin' ? 'selected' : '' }}
+                        >
+                            Admin
+                        </option>
+
+                    </select>
+
+                </div>
+
+            </div>
+
+
+            <!-- LOGIN BUTTON -->
+
+            <button
+                type="submit"
+                class="login-button"
+            >
+
+                🔐 Login to Foodie
+
+            </button>
+
+
+        </form>
+
+
+        <!-- REGISTER -->
+
+        <div class="register">
+
+            Don't have an account?
+
+            <a href="{{ route('register') }}">
+                Create Account
+            </a>
+
+        </div>
+
+
+        <!-- HOME -->
+
+        <a
+            href="{{ route('home') }}"
+            class="home-link"
+        >
+
+            ← Back to Home
+
+        </a>
+
+
+    </div>
+
+
+</div>
+
+
+</body>
+
+</html>

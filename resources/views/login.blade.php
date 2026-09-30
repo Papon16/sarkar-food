@@ -690,14 +690,12 @@
                         <option value="">
                             Select your role
                         </option>
-
-                        <option
-                            value="customer"
-                            {{ old('role') == 'customer' ? 'selected' : '' }}
-                        >
-                            Customer
-                        </option>
-
+<option
+    value="user"
+    {{ old('role') == 'user' ? 'selected' : '' }}
+>
+    Customer
+</option>
                         <option
                             value="admin"
                             {{ old('role') == 'admin' ? 'selected' : '' }}
