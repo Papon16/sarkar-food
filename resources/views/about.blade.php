@@ -1244,7 +1244,7 @@
 
         <div class="small-title">
 
-            About {{ $settings->restaurant_name ?? 'SarkarFood' }}
+            About {{ $settings->restaurant_name ?? 'SarkarFood' }}<span>Food</span>
 
         </div>
 
@@ -1770,7 +1770,7 @@
 
         © {{ date('Y') }}
 
-        {{ $settings->restaurant_name ?? 'SarkarFood' }}.
+        {{ $settings->restaurant_name ?? 'SarkarFood' }}.<span>Food</span>
 
         All Rights Reserved.
 

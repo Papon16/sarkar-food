@@ -1399,7 +1399,7 @@
 
             <div class="footer-logo">
 
-                {{ $settings->restaurant_name ?? 'SarkarFood' }}
+                {{ $settings->restaurant_name ?? 'SarkarFood' }}<span>Food</span>
 
             </div>
 
@@ -1617,7 +1617,7 @@
 
             © {{ date('Y') }}
 
-            {{ $settings->restaurant_name ?? 'SarkarFood' }}.
+            {{ $settings->restaurant_name ?? 'SarkarFood' }}.<span>Food</span>
 
             All rights reserved.
 
