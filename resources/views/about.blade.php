@@ -1037,11 +1037,10 @@
 
         <div>
 
-            <div class="logo-text">
-
+            <div class="logo-name">
                 {{ $settings->restaurant_name ?? 'SarkarFood' }}<span>Food</span>
-
             </div>
+
 
 
             <div class="tagline">
@@ -1579,13 +1578,10 @@
 
         <div>
 
-
-            <div class="footer-logo">
-
-                                {{ $settings->restaurant_name ?? 'SarkarFood' }}<span>Food</span>
-
-
+<div class="logo-name">
+                {{ $settings->restaurant_name ?? 'SarkarFood' }}<span>Food</span>
             </div>
+
 
 
             <p class="footer-about">

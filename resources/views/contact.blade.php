@@ -779,7 +779,7 @@
 
         <div>
 
-            <div class="logo-text">
+           <div class="logo-name">
                 {{ $settings->restaurant_name ?? 'SarkarFood' }}<span>Food</span>
             </div>
 
@@ -1213,9 +1213,9 @@
 
             <div class="map-info">
 
-                <h3>
-                    {{ $settings->restaurant_name ?? 'SarkarFood' }}
-                </h3>
+              <div class="logo-name">
+                {{ $settings->restaurant_name ?? 'SarkarFood' }}<span>Food</span>
+            </div>
 
                 <p>
 
