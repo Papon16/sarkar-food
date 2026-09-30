@@ -124,7 +124,9 @@
         }
 
 
-        /* NAV LINKS */
+        /* =====================================================
+           NAV LINKS
+        ===================================================== */
 
         .nav-links {
             display: flex;
@@ -168,7 +170,9 @@
         }
 
 
-        /* RIGHT SIDE */
+        /* =====================================================
+           RIGHT SIDE
+        ===================================================== */
 
         .nav-right {
             display: flex;
@@ -250,7 +254,9 @@
         }
 
 
-        /* SEARCH RESULT */
+        /* =====================================================
+           SEARCH RESULT
+        ===================================================== */
 
         .search-result {
             max-width: 1400px;
@@ -281,7 +287,9 @@
         }
 
 
-        /* CART */
+        /* =====================================================
+           CART
+        ===================================================== */
 
         .cart-btn {
             position: relative;
@@ -312,7 +320,9 @@
         }
 
 
-        /* LOGIN */
+        /* =====================================================
+           LOGIN
+        ===================================================== */
 
         .login-btn {
             background: #ff5a16;
@@ -334,7 +344,9 @@
         }
 
 
-        /* SIGN UP */
+        /* =====================================================
+           SIGN UP
+        ===================================================== */
 
         .signup-btn {
             border: 1px solid #222;
@@ -454,7 +466,9 @@
         }
 
 
-        /* FEATURES */
+        /* =====================================================
+           FEATURES
+        ===================================================== */
 
         .hero-features {
             display: flex;
@@ -588,8 +602,6 @@
             padding: 35px;
         }
 
-        /* PNG IMAGE - OFFER BURGER */
-
         .offer-burger {
             background-image:
                 linear-gradient(
@@ -599,8 +611,6 @@
                 ),
                 url('{{ asset('images/offer-burger.png') }}');
         }
-
-        /* PNG IMAGE - HEALTHY FOOD */
 
         .offer-healthy {
             background-image:
@@ -693,7 +703,6 @@
             border-radius: 25px;
 
             font-size: 14px;
-            font-weight: 600;
         }
 
 
@@ -705,6 +714,8 @@
             padding: 70px 5%;
 
             background: white;
+
+            scroll-margin-top: 90px;
         }
 
         .section-heading {
@@ -809,7 +820,9 @@
         }
 
 
-        /* NO SEARCH RESULT */
+        /* =====================================================
+           NO SEARCH RESULT
+        ===================================================== */
 
         .no-results {
             grid-column: 1 / -1;
@@ -945,9 +958,22 @@
         .mobile-menu {
             display: none;
 
+            border: none;
+            background: transparent;
+
             font-size: 24px;
 
             cursor: pointer;
+
+            color: #111;
+
+            align-items: center;
+            justify-content: center;
+
+            width: 42px;
+            height: 42px;
+
+            z-index: 1001;
         }
 
 
@@ -981,18 +1007,65 @@
 
             .navbar {
                 height: 70px;
+                padding: 0 20px;
             }
 
+            /* Hide normal navigation */
             .nav-links {
+                display: none;
+
+                position: absolute;
+
+                top: 70px;
+                left: 0;
+
+                width: 100%;
+
+                background: #ffffff;
+
+                flex-direction: column;
+
+                align-items: stretch;
+
+                gap: 0;
+
+                margin-left: 0;
+
+                padding: 10px 20px;
+
+                box-shadow:
+                    0 8px 20px rgba(0,0,0,.12);
+
+                z-index: 999;
+            }
+
+            /* Open mobile navigation */
+            .nav-links.mobile-open {
+                display: flex;
+            }
+
+            .nav-links a {
+                width: 100%;
+
+                padding: 14px 10px;
+
+                border-bottom: 1px solid #eee;
+
+                font-size: 15px;
+            }
+
+            .nav-links a.active::after {
                 display: none;
             }
 
+            /* Hide search/cart/login on mobile navbar */
             .nav-right {
                 display: none;
             }
 
+            /* Show 3-dot menu */
             .mobile-menu {
-                display: block;
+                display: flex;
             }
 
             .hero {
@@ -1134,8 +1207,8 @@
         <div class="logo-text">
 
             <div class="logo-name">
-    {{ $settings->restaurant_name ?? 'SarkarFood' }}
-</div>
+                {{ $settings->restaurant_name ?? 'SarkarFood' }}
+            </div>
 
             <div class="logo-tagline">
                 Good Food &nbsp; Better Mood
@@ -1308,13 +1381,16 @@
     </div>
 
 
-    <!-- MOBILE -->
+    <!-- MOBILE MENU BUTTON -->
 
-    <div class="mobile-menu">
-
+    <button
+        type="button"
+        class="mobile-menu"
+        id="mobileMenuBtn"
+        aria-label="Open menu"
+    >
         <i class="fa-solid fa-bars"></i>
-
-    </div>
+    </button>
 
 </header>
 
@@ -1489,23 +1565,27 @@
 
                 <div class="category-image">
 
-                   @php
-    $categoryImages = [
-        'Burger' => 'burger.png',
-        'Chicken' => 'chicken.png',
-        'Dessert' => 'dessert.png',
-        'Drinks' => 'drinks.png',
-        'Pasta' => 'pasta.png',
-        'Pizza' => 'pizza.png',
-    ];
+                    @php
 
-    $categoryImageFile = $categoryImages[$category->name] ?? 'burger.png';
-@endphp
+                        $categoryImages = [
+                            'Burger' => 'burger.png',
+                            'Chicken' => 'chicken.png',
+                            'Dessert' => 'dessert.png',
+                            'Drinks' => 'drinks.png',
+                            'Pasta' => 'pasta.png',
+                            'Pizza' => 'pizza.png',
+                        ];
 
-<img
-    src="{{ asset('images/home/' . $categoryImageFile) }}"
-    alt="{{ $category->name }}"
->
+                        $categoryImageFile =
+                            $categoryImages[$category->name]
+                            ?? 'burger.png';
+
+                    @endphp
+
+                    <img
+                        src="{{ asset('images/home/' . $categoryImageFile) }}"
+                        alt="{{ $category->name }}"
+                    >
 
                 </div>
 
@@ -1523,7 +1603,9 @@
                 padding: 20px;
                 color: #777;
             ">
+
                 No categories available.
+
             </div>
 
         @endforelse
@@ -1750,6 +1832,7 @@
                     No Food Found
                 </h3>
 
+
                 @if(request('search'))
 
                     <p>
@@ -1803,9 +1886,12 @@
 
         <div>
 
- <div class="logo-name">
-    {{ $settings->restaurant_name ?? 'SarkarFood' }}
-</div>
+            <div class="footer-logo">
+
+                {{ $settings->restaurant_name ?? 'SarkarFood' }}
+
+            </div>
+
             <p class="footer-description">
 
                 Delicious food made with fresh ingredients
@@ -1963,6 +2049,115 @@
     </div>
 
 </footer>
+
+
+
+<!-- =========================================================
+     MOBILE MENU + SEARCH AUTO SCROLL
+========================================================= -->
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function () {
+
+
+    /* =====================================================
+       MOBILE MENU
+    ===================================================== */
+
+    const mobileMenuBtn =
+        document.getElementById('mobileMenuBtn');
+
+    const navLinks =
+        document.querySelector('.nav-links');
+
+
+    if (mobileMenuBtn && navLinks) {
+
+
+        mobileMenuBtn.addEventListener('click', function () {
+
+
+            navLinks.classList.toggle('mobile-open');
+
+
+            const icon =
+                mobileMenuBtn.querySelector('i');
+
+
+            if (
+                navLinks.classList.contains('mobile-open')
+            ) {
+
+                icon.classList.remove('fa-bars');
+
+                icon.classList.add('fa-xmark');
+
+            } else {
+
+                icon.classList.remove('fa-xmark');
+
+                icon.classList.add('fa-bars');
+
+            }
+
+        });
+
+
+        /* Menu item click করলে menu বন্ধ হবে */
+
+        navLinks.querySelectorAll('a').forEach(function (link) {
+
+            link.addEventListener('click', function () {
+
+                navLinks.classList.remove('mobile-open');
+
+
+                const icon =
+                    mobileMenuBtn.querySelector('i');
+
+
+                icon.classList.remove('fa-xmark');
+
+                icon.classList.add('fa-bars');
+
+            });
+
+        });
+
+    }
+
+
+
+    /* =====================================================
+       SEARCH RESULT AUTO SCROLL
+    ===================================================== */
+
+    @if(request('search'))
+
+        const menuSection =
+            document.getElementById('menu');
+
+
+        if (menuSection) {
+
+            setTimeout(function () {
+
+                menuSection.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+
+            }, 300);
+
+        }
+
+    @endif
+
+
+});
+
+</script>
 
 
 </body>
