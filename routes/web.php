@@ -351,16 +351,3 @@ Route::middleware(['auth', 'admin'])->group(function () {
     )->name('admin.admins.delete');
 
 });
-Route::get('/temporary-admin-reset-2026', function () {
-
-    $user = \App\Models\User::updateOrCreate(
-        ['email' => 'admin@gmail.com'],
-        [
-            'name' => 'Admin',
-            'password' => \Illuminate\Support\Facades\Hash::make('Admin@123'),
-            'role' => 'admin',
-        ]
-    );
-
-    return 'Admin account created/reset successfully.';
-});
