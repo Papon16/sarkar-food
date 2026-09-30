@@ -10,9 +10,6 @@ class FoodSeeder extends Seeder
 {
     public function run(): void
     {
-        // Delete old food records
-        Food::query()->delete();
-
         // Get category IDs
         $categories = Category::pluck('id', 'name');
 
@@ -252,9 +249,15 @@ class FoodSeeder extends Seeder
             ],
         ];
 
-        // Insert all foods
+        // Create food only if it does not already exist
         foreach ($foods as $food) {
-            Food::create($food);
+
+            Food::firstOrCreate(
+                [
+                    'name' => $food['name'],
+                ],
+                $food
+            );
         }
     }
 }

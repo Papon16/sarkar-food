@@ -9,15 +9,19 @@ class CategorySeeder extends Seeder
 {
     public function run(): void
     {
-        // Delete old categories
-        Category::truncate();
+        $categories = [
+            'Pizza',
+            'Burger',
+            'Chicken',
+            'Pasta',
+            'Drinks',
+            'Dessert',
+        ];
 
-        // Create categories
-        Category::create(['name' => 'Pizza']);
-        Category::create(['name' => 'Burger']);
-        Category::create(['name' => 'Chicken']);
-        Category::create(['name' => 'Pasta']);
-        Category::create(['name' => 'Drinks']);
-        Category::create(['name' => 'Dessert']);
+        foreach ($categories as $name) {
+            Category::firstOrCreate([
+                'name' => $name,
+            ]);
+        }
     }
 }
