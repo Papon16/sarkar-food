@@ -35,31 +35,25 @@ class HomeController extends Controller
 
         if ($search) {
             $query->where(function ($q) use ($search) {
-
                 $q->where('name', 'like', '%' . $search . '%')
-                  ->orWhere('description', 'like', '%' . $search . '%');
-
+                    ->orWhere('description', 'like', '%' . $search . '%');
             });
         }
 
         // ==================== CATEGORY FILTER ====================
 
         if ($selectedCategory) {
-
             $category = Category::where(
                 'name',
                 $selectedCategory
             )->first();
 
             if ($category) {
-
                 $query->where(
                     'category_id',
                     $category->id
                 );
-
             } else {
-
                 $selectedCategory = null;
             }
         }
@@ -130,7 +124,6 @@ class HomeController extends Controller
         $cart = session()->get('cart', []);
 
         if (isset($cart[$id])) {
-
             $cart[$id]['quantity'] = $request->quantity;
         }
 
@@ -148,7 +141,6 @@ class HomeController extends Controller
         $cart = session()->get('cart', []);
 
         if (isset($cart[$id])) {
-
             unset($cart[$id]);
         }
 
@@ -180,6 +172,7 @@ class HomeController extends Controller
 
     public function placeOrder(Request $request)
     {
+        // Validate customer information
         $request->validate([
             'name' => 'required|string|max:100',
             'phone' => 'required|string|max:30',
@@ -187,10 +180,11 @@ class HomeController extends Controller
             'payment_method' => 'required|string',
         ]);
 
+        // Get cart
         $cart = session()->get('cart', []);
 
+        // Check empty cart
         if (empty($cart)) {
-
             return redirect()
                 ->route('cart')
                 ->with(
@@ -199,39 +193,43 @@ class HomeController extends Controller
                 );
         }
 
-        // Food total
+        // ==================== FOOD TOTAL ====================
+
         $total = 0;
 
         foreach ($cart as $item) {
-
             $total +=
                 $item['price'] *
                 $item['quantity'];
         }
 
-        // Settings
+        // ==================== SETTINGS ====================
+
         $settings = Setting::first();
 
         // Delivery charge
-        $deliveryCharge =
-            $settings->delivery_charge ?? 50;
+        $deliveryCharge = $settings
+            ? $settings->delivery_charge
+            : 50;
 
         // Grand total
         $grandTotal =
             $total +
             $deliveryCharge;
 
-        // Create order
+        // ==================== CREATE ORDER ====================
+
         $order = Order::create([
-            'customer_name' => $request->name,
+            'name' => $request->name,
             'phone' => $request->phone,
             'address' => $request->address,
             'payment_method' => $request->payment_method,
             'total' => $grandTotal,
-            'status' => 'pending',
+            'status' => 'Pending',
         ]);
 
-        // Create order items
+        // ==================== CREATE ORDER ITEMS ====================
+
         foreach ($cart as $foodId => $item) {
 
             OrderItem::create([
@@ -246,8 +244,11 @@ class HomeController extends Controller
             ]);
         }
 
-        // Clear cart
+        // ==================== CLEAR CART ====================
+
         session()->forget('cart');
+
+        // ==================== SUCCESS ====================
 
         return redirect()
             ->route('checkout')

@@ -534,8 +534,8 @@
 
         <div class="brand">
             <div class="brand-name">
-                Sarkar<span>Food</span>
-            </div>
+    {{ $settings->restaurant_name ?? 'SarkarFood' }}
+</div>
             <small>Good Food &nbsp; Better Mood</small>
         </div>
 
