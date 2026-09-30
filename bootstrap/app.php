@@ -15,6 +15,10 @@ return Application::configure(
 
     ->withMiddleware(function (Middleware $middleware) {
 
+        // Trust Render's proxy so Laravel knows the original request is HTTPS
+        $middleware->trustProxies(at: '*');
+
+        // Admin middleware
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
         ]);
