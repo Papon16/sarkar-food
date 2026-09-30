@@ -780,7 +780,7 @@
         <div>
 
             <div class="logo-text">
-                {{ $settings->restaurant_name ?? 'SarkarFood' }}
+                {{ $settings->restaurant_name ?? 'SarkarFood' }}<span>Food</span>
             </div>
 
             <span class="tagline">

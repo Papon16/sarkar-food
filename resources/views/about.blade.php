@@ -1244,7 +1244,8 @@
 
         <div class="small-title">
 
-            About {{ $settings->restaurant_name ?? 'SarkarFood' }}<span>Food</span>
+            About{{ $settings->restaurant_name ?? 'SarkarFood' }}<span>Food</span>
+
 
         </div>
 
@@ -1581,7 +1582,8 @@
 
             <div class="footer-logo">
 
-                {{ $settings->restaurant_name ?? 'SarkarFood' }}
+                                {{ $settings->restaurant_name ?? 'SarkarFood' }}<span>Food</span>
+
 
             </div>
 
