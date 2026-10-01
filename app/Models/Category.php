@@ -9,6 +9,8 @@ class Category extends Model
     protected $fillable = [
         'name',
         'icon',
+        'image',
+        'description',
     ];
 
     public function foods()

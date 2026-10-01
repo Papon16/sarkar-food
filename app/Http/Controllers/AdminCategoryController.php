@@ -12,25 +12,92 @@ class AdminCategoryController extends Controller
     // CATEGORY LIST
     // =========================
 
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::orderBy('name')->get();
+        /*
+        |--------------------------------------------------------------------------
+        | Category Query
+        |--------------------------------------------------------------------------
+        */
 
-        // প্রতিটি category-এর জন্য একটি food image এবং item count
-        foreach ($categories as $category) {
+        $query = Category::withCount('foods')
+            ->orderBy('name');
 
-            $category->items_count = Food::where(
-                'category_id',
-                $category->id
-            )->count();
 
-            $category->category_image = Food::where(
-                'category_id',
-                $category->id
-            )->value('image');
+        /*
+        |--------------------------------------------------------------------------
+        | Search
+        |--------------------------------------------------------------------------
+        */
+
+        if ($request->filled('search')) {
+
+            $search = $request->search;
+
+            $query->where(function ($q) use ($search) {
+
+                $q->where('name', 'like', '%' . $search . '%')
+                    ->orWhere('description', 'like', '%' . $search . '%');
+
+            });
         }
 
-        $totalCategories = $categories->count();
+
+        /*
+        |--------------------------------------------------------------------------
+        | Categories
+        |--------------------------------------------------------------------------
+        */
+
+        $categories = $query->get();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Category Image
+        |--------------------------------------------------------------------------
+        |
+        | যদি category-এর নিজের image থাকে → সেটি দেখাবে।
+        |
+        | যদি category image না থাকে → ওই category-এর
+        | প্রথম food-এর image ব্যবহার করবে।
+        |
+        */
+
+        foreach ($categories as $category) {
+
+            $category->items_count = $category->foods_count;
+
+            // প্রথমে category-এর নিজের image
+            if (!empty($category->image)) {
+
+                $category->category_image = $category->image;
+
+            } else {
+
+                // Category image না থাকলে প্রথম food-এর image
+                $category->category_image = Food::where(
+                    'category_id',
+                    $category->id
+                )->value('image');
+            }
+        }
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Statistics
+        |--------------------------------------------------------------------------
+        */
+
+        $totalCategories = Category::count();
+
+        /*
+        |--------------------------------------------------------------------------
+        | বর্তমানে categories table-এ is_active column নেই।
+        | তাই এখন সব category active/visible হিসেবে ধরা হচ্ছে।
+        |--------------------------------------------------------------------------
+        */
 
         $activeCategories = $totalCategories;
 
@@ -38,12 +105,32 @@ class AdminCategoryController extends Controller
 
         $hiddenCategories = 0;
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | Search & Status Value
+        |--------------------------------------------------------------------------
+        */
+
+        $search = $request->search;
+
+        $status = $request->get('status', 'all');
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Return View
+        |--------------------------------------------------------------------------
+        */
+
         return view('admin.categories', compact(
             'categories',
             'totalCategories',
             'activeCategories',
             'visibleCategories',
-            'hiddenCategories'
+            'hiddenCategories',
+            'search',
+            'status'
         ));
     }
 
@@ -65,16 +152,51 @@ class AdminCategoryController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:100|unique:categories,name',
+
+            'name' => [
+                'required',
+                'string',
+                'max:100',
+                'unique:categories,name',
+            ],
+
+            'description' => [
+                'nullable',
+                'string',
+            ],
+
+            'icon' => [
+                'nullable',
+                'string',
+                'max:20',
+            ],
+
         ]);
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | Create Category
+        |--------------------------------------------------------------------------
+        */
+
         Category::create([
+
             'name' => $request->name,
+
+            'description' => $request->description,
+
+            'icon' => $request->icon ?: '🍽️',
+
         ]);
+
 
         return redirect()
             ->route('admin.categories.index')
-            ->with('success', 'Category added successfully!');
+            ->with(
+                'success',
+                'Category added successfully!'
+            );
     }
 
 
@@ -95,19 +217,57 @@ class AdminCategoryController extends Controller
     // UPDATE CATEGORY
     // =========================
 
-    public function update(Request $request, Category $category)
-    {
+    public function update(
+        Request $request,
+        Category $category
+    ) {
+
         $request->validate([
-            'name' => 'required|string|max:100|unique:categories,name,' . $category->id,
+
+            'name' => [
+                'required',
+                'string',
+                'max:100',
+                'unique:categories,name,' . $category->id,
+            ],
+
+            'description' => [
+                'nullable',
+                'string',
+            ],
+
+            'icon' => [
+                'nullable',
+                'string',
+                'max:20',
+            ],
+
         ]);
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | Update Category
+        |--------------------------------------------------------------------------
+        */
+
         $category->update([
+
             'name' => $request->name,
+
+            'description' => $request->description,
+
+            'icon' => $request->icon ?: '🍽️',
+
         ]);
+
 
         return redirect()
             ->route('admin.categories.index')
-            ->with('success', 'Category updated successfully!');
+            ->with(
+                'success',
+                'Category updated successfully!'
+            );
     }
 
 
@@ -117,11 +277,23 @@ class AdminCategoryController extends Controller
 
     public function destroy(Category $category)
     {
-        // Category-এর food আছে কিনা check
+        /*
+        |--------------------------------------------------------------------------
+        | Check Food Items
+        |--------------------------------------------------------------------------
+        */
+
         $foodCount = Food::where(
             'category_id',
             $category->id
         )->count();
+
+
+        /*
+        |--------------------------------------------------------------------------
+        | Prevent Delete If Food Exists
+        |--------------------------------------------------------------------------
+        */
 
         if ($foodCount > 0) {
 
@@ -133,7 +305,15 @@ class AdminCategoryController extends Controller
                 );
         }
 
+
+        /*
+        |--------------------------------------------------------------------------
+        | Delete Category
+        |--------------------------------------------------------------------------
+        */
+
         $category->delete();
+
 
         return redirect()
             ->route('admin.categories.index')
